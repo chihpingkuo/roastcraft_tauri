@@ -1,0 +1,122 @@
+version = "v1"
+brand   = "roastcraft"
+model   = "modbus"
+temperature_unit = "C" # C or F
+# pnpm tauri dev -- -- --config=../machines/kapok/501_inlet_rtu.toml
+
+alarms = [160, 170, 180, 190, 200]
+
+[serial]
+    port      = "COM4"
+    baud_rate = 9600
+    data_bits = 8
+    parity    = "none"
+    stop_bits = 1
+
+    [serial.modbus]
+        # modbus-ascii, modbus-rtu
+        protocol = "modbus-rtu"
+
+        [[serial.modbus.slave]]
+            channel_id  = "ET"
+            label       = "exhaust temp"
+            color       = "#ff0000"
+            id          = 1
+            function    = 3
+            registry    = 18176     # = 4700h
+            divisor     = 10        # 1, 10, 100
+            decode_type = "u16"     # u16, u32, i16, i32, f32
+
+        [[serial.modbus.slave]]
+            channel_id  = "BT"
+            label       = "bean temp"
+            color       = "#191970"
+            ror_color   = "#4169E1" # BT only
+            id          = 2
+            function    = 3
+            registry    = 18176     # = 4700h
+            divisor     = 10        # 1, 10, 100
+            decode_type = "u16"     # u16, u32, i16, i32, f32
+
+        [[serial.modbus.slave]]
+            channel_id  = "inlet"
+            label       = "inlet temp"
+            color       = "#2E8B57"
+            id          = 3
+            function    = 3
+            registry    = 18176     # = 4700h
+            divisor     = 10        # 1, 10, 100
+            decode_type = "u16"     # u16, u32, i16, i32, f32
+
+    [serial.ta612c]
+
+        [[serial.ta612c.channel]]
+            channel_id  = "BT"
+            label       = "bean temp"
+            color       = "#00007f"
+            ror_color   = "#dd0000" # BT only
+
+        [[serial.ta612c.channel]]
+            channel_id  = "ET"
+            label       = "exhaust temp"
+            color       = "#00007f"
+
+[tcp]
+    ip = "127.0.0.1"
+    port = 502
+
+    [tcp.modbus]
+        # modbus-tcp 
+        protocol = "modbus-tcp"
+
+        [[tcp.modbus.slave]]
+            channel_id  = "fan"
+            label       = "air pressure"
+            unit        = "pa"
+            color       = "#00007f"
+            id          = 4
+            function    = 3
+            registry    = 20       # = 14h
+            divisor     = 1        # 1, 10, 100
+            decode_type = "f32"    # u16, u32, i16, i32, f32
+            
+
+    [tcp.http]
+
+        [[tcp.http.channel]]
+            channel_id  = "BT"
+            label       = "bean temp"
+            color       = "#191970"
+            ror_color   = "#4169E1" # BT only
+
+        [[tcp.http.channel]]
+            channel_id  = "ET"
+            label       = "exhaust temp"
+            color       = "#ff0000"
+            
+        [[tcp.http.channel]]
+            channel_id  = "inlet"
+            label       = "inlet temp"
+            color       = "#2E8B57"
+            
+[[manual_channel]]
+    channel_id  = "gas"
+    label       = "Gas"
+    unit        = "mmHg"
+    color       = "#007f00"
+    min         = 0
+    max         = 100
+    step        = 10        # 0 means no steps
+    default_value     = 20
+
+[[manual_channel]]
+    channel_id  = "airflow"
+    label       = "Airflow"
+    unit        = "Pa"
+    color       = "#007f00"
+    min         = 20
+    max         = 50
+    step        = 5         # 0 means no steps
+    default_value     = 30
+
+# you CANNOT write top level keys after array of tables

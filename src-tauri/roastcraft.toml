@@ -1,0 +1,52 @@
+version = "v1"
+brand   = "rc-http-sim"
+model   = "http"
+temperature_unit = "C" # C or F
+# pnpm tauri dev -- -- --config=../machines/kapok/501_inlet.toml
+# pnpm tauri dev -- -- --config=../machines/tasi/ta612c.toml
+
+alarms = [160, 170, 180, 190, 200]
+
+[tcp]
+    ip = "127.0.0.1"
+    port = 502
+          
+    [tcp.http]
+
+        [[tcp.http.channel]]
+            channel_id  = "BT"
+            label       = "bean temp"
+            color       = "#191970"
+            ror_color   = "#4169E1" # BT only
+
+        [[tcp.http.channel]]
+            channel_id  = "ET"
+            label       = "exhaust temp"
+            color       = "#ff0000"
+            
+        [[tcp.http.channel]]
+            channel_id  = "inlet"
+            label       = "inlet temp"
+            color       = "#2E8B57"
+
+[[manual_channel]]
+    channel_id  = "gas"
+    label       = "Gas"
+    unit        = "mmHg"
+    color       = "#007f00"
+    min         = 0
+    max         = 100
+    step        = 10        
+    default_value = 20
+
+[[manual_channel]]
+    channel_id  = "airflow"
+    label       = "Airflow"
+    unit        = "Pa"
+    color       = "#007f00"
+    min         = 26
+    max         = 40
+    step        = 1         
+    default_value = 32
+
+# you CANNOT write top level keys after array of tables
